@@ -1,0 +1,68 @@
+  <% layout("layouts/boilerplate") -%>
+  <div class="row">
+    <div class="col-8 offset-2">
+      <br>
+    <h1>Create a New Listing</h1>
+        <form method="post" action="/listings" class="needs-validation" novalidate>
+    <div>
+        <label for="title" class="form-label">Title</label>
+        <input type="text" id="title" name="listing[title]" class="form-control" placeholder="Enter title"required>
+        <div class="invalid-feedback">
+            Please select a valid title.
+         </div>
+         <div class="valid-feedback">
+            looks good1.
+         </div>
+      </div>
+
+         <div class="mb-3">
+          <label for="description" class="form-label">Description</label>
+          <textarea id="description" name="listing[description]"class="form-control" placeholder="Enter description"  required></textarea>
+          <div class="invalid-feedback">
+            Please select a valid description.
+         </div>
+         </div>
+  
+         <div  class="mb-3">
+           <label for="image" class="form-label">Image</label>
+           <input type="file" id="image" name="listing[image]"class="form-control" placeholder="Enter image Url/Link">
+         </div>
+
+     <div class="row">
+         <div  class="mb-3 col-md-4">
+          <label for="price" class="form-label">Price</label>
+          <input type="text" id="price" name="listing[price]"class="form-control" placeholder="&#8377 2999"  required>
+          <div class="invalid-feedback">
+            Please select a valid price.
+         </div>
+         </div>
+         <div class="mb-3 col-md-8">
+          <label for="location" class="form-label">Country</label>
+          <input type="text" id="country" name="listing[country]"class="form-control" placeholder="India"  required>
+          <div class="invalid-feedback">
+            Please select a valid country.
+         </div>
+         </div>
+     </div>
+
+         <div class="mb-3">
+           <label for="location" class="form-label">Location</label>
+           <input type="text" id="location" name="listing[location]"class="form-control" placeholder="New delhi"  required>
+           <div class="invalid-feedback">
+            Please select a valid location.
+         </div>
+         </div>
+   
+        <button type="submit"class="btn btn-dark add-btn">add</button>
+        <br><br>
+        
+    </form>
+    </div>
+    </div>
+
+
+
+    <!-- mean of this line name="listing[image]" , name="listing[title]", name="listing[description]", name="listing[price]", name="listing[location]" is used to create a nested object in the request body, which is useful for organizing data in a structured way. When the form is submitted, the data will be accessible as `req.body.listing` in your Express route handler. -->
+    <!-- we dont need to use like let { title, description, price, location, image } = req.body
+     after use abouve line name :[titile] we can use like this :new listing(req.body.listing) in out app.js file -->
+
