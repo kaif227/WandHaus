@@ -8,6 +8,8 @@ const methodOverride = require('method-override');
 const ejsMate = require('ejs-mate');
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require('./utils/ExpressError.js');
+const Joi = require('joi');//for schema validation
+const { listingSchema } = require('./schema.js');
 
 
 const MONGO_URL = 'mongodb://127.0.0.1:27017/wandHaus'
@@ -48,20 +50,12 @@ app.get("/listings/new", (req, res) => {
     res.render("listings/new.ejs");
 })
 app.post("/listings", wrapAsync(async (req, res) => {
-    if(!req.body.listing) {
-        throw new ExpressError("Invalid Listing Data", 400);
-      }
+    let result = listingSchema.validate(req.body);
+    console.log(result);
+    if (result.error) {
+        throw new ExpressError(400, result.error.details[0].message);
+    }
         const newListing =  new Listing(req.body.listing); 
-     if(!req.body.description) {
-        throw new ExpressError("Invalid Listing Data", 400);
-      }
-      if(!req.body.title) {
-        throw new ExpressError("Invalid Listing Data", 400);
-      }
-      if(!req.body.location) {
-        throw new ExpressError("Invalid Listing Data", 400);
-      }
-
 
         await newListing.save();
         res.redirect("/listings"); 
