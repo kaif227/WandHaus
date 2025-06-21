@@ -2,12 +2,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const port = 8080;
+const app = express();
 const Listing = require('./models/listing');
 const methodOverride = require('method-override');
 const ejsMate = require('ejs-mate');
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require('./utils/ExpressError.js');
-const app = express();
 
 
 const MONGO_URL = 'mongodb://127.0.0.1:27017/wandHaus'
@@ -38,10 +38,10 @@ app.get("/",(req,res)=>{
 });
 
 //index route to render the listings page
-app.get("/listings",async (req, res) => {
+app.get("/listings",wrapAsync(async (req, res) => {
     const allListings =  await Listing.find({})
     res.render("listings/index.ejs", { listings: allListings });
-})
+}));
 
 //create route or new route to render the form for creating a new listing
 app.get("/listings/new", (req, res) => {
@@ -82,8 +82,8 @@ app.delete("/listings/:id",wrapAsync( async (req, res) =>{
 }))
 
 
-app.all("*", (req, res, next) => {
-    next(new ExpressError("Page Not Found", 404));
+app.all(/.*/, (req, res, next) => {
+    next(new ExpressError(400,"Page Not Found"));
 });
 
 
