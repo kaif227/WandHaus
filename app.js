@@ -50,8 +50,19 @@ app.get("/listings/new", (req, res) => {
 app.post("/listings", wrapAsync(async (req, res) => {
     if(!req.body.listing) {
         throw new ExpressError("Invalid Listing Data", 400);
-    }
+      }
         const newListing =  new Listing(req.body.listing); 
+     if(!req.body.description) {
+        throw new ExpressError("Invalid Listing Data", 400);
+      }
+      if(!req.body.title) {
+        throw new ExpressError("Invalid Listing Data", 400);
+      }
+      if(!req.body.location) {
+        throw new ExpressError("Invalid Listing Data", 400);
+      }
+
+
         await newListing.save();
         res.redirect("/listings"); 
 }))
@@ -90,9 +101,8 @@ app.all(/.*/, (req, res, next) => {
 //404 route to handle not found pages
 app.use((err,req,res,next)=>{
     const{statusCode=500, message="Something went wrong"} = err;
-    res.status(statusCode).send(message)
-
-})
+    res.render("error.ejs", { message });    
+})//This is is the error handling middleware that catches any errors that occur in the application and renders an error page with the status code and message.
 
 
 app.listen(port, () => {
