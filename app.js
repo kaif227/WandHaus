@@ -10,6 +10,7 @@ const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require('./utils/ExpressError.js');
 const Joi = require('joi');//for schema validation
 const { listingSchema } = require('./schema.js');
+const Review = require('./models/review.js');
 
 
 const MONGO_URL = 'mongodb://127.0.0.1:27017/wandHaus'
@@ -39,15 +40,14 @@ app.get("/",(req,res)=>{
 });
 
 const validateListing = (req, res, next) => {
-    let {error} = listingSchema.validate(req.body);
-    
+    let {error} = listingSchema.validate(req.body);//this line validates the request body against the Joi schema defined in schema.js.
+    //If the validation fails, it will return an error object with details about the validation errors
     if (error) {//If we got an error from the validation, we throw an ExpressError with a 400 status code and the error message.
         let errMsg = error.details.map((el) => el.message).join(', '); 
         throw new ExpressError(400,errMsg);
     }else{
         next();
     }
-    
 }
 
 //index route to render the listings page
@@ -101,7 +101,20 @@ app.delete("/listings/:id",
     const {id} = req.params;
     const deletedListing = await Listing.findByIdAndDelete(id);
     res.redirect("/listings");
-}))
+}));
+
+//Review
+//Post route
+app.post("/listings/:id/reviews",async (req,res)=>{
+    const {id} = req.params;
+    const listing = await Listing.findById(id);
+    const newReview = new Review(req.body.review);
+    listing.review.push(newReview);
+    await newReview.save();
+    await listing.save();
+    res.redirect(`/listings/${id}`);
+});
+
 
 //Defaul 404 route to handle any unmatched routes 
 app.all(/.*/, (req, res, next) => {
