@@ -5,7 +5,7 @@
   <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 g-3">
     <% for (listing of listings) { %>
       <a href="/listings/<%=listing._id %>" class="listing-link">
-        <div class="card col">
+        <div class="card col listing-card">
           <img src="<%= listing.image.url %>" style="height: 20rem;" class="card-img-top" alt="<%= listing.title %> image">
           <div class="card-img-overlay">
             <h5 class="card-title text-white"><%= listing.title %></h5>

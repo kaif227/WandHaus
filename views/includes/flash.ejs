@@ -1,0 +1,13 @@
+<% if(success && success.length) { %> <!--  means success main kuch value ho and 
+    success variable ki length bhi 0 se greater ho kyonki akela succes ek array h 
+    jo ki hua tab bhi alert show hoga is liye uski kuch length 0 se greate hogi tab hi alert show hoga --> 
+<div class="alert alert-success alert-dismissible fade show offset-3 col-6 mt-2"  role="alert">
+  <%=success %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+<%}%> <% if(error && error.length) { %> <!-- means success ek emplty error hoga tab bhi alert show hoga error.length mean empty array na ho to alert show na ho -->
+<div class="alert alert-danger alert-dismissible fade show offset-3 col-6 mt-2"  role="alert">
+  <%=error %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+<%}%>

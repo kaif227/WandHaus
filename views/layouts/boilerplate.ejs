@@ -11,6 +11,8 @@
        
    
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,500;0,600;1,300;1,500;1,600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/logo.png">
+
 
      
     <title>wandHaus</title>
@@ -18,7 +20,9 @@
 <body>
     <%- include("../includes/navbar.ejs") %>
 
-    <div class="container"> <%- body %> </div>
+    <div class="container"> 
+      <%- include("../includes/flash.ejs") %>
+      <%- body %> </div>
 
       <!--mean of this line mean we are exporting the body of the page from other files like index.ejs, show.ejs, new.ejs, edit.ejs -->
       
