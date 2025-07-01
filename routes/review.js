@@ -4,7 +4,7 @@ const wrapAsync = require("../utils/wrapAsync.js");
 const ExpressError = require('../utils/ExpressError.js');
 const Review = require('../models/review.js');
 const Listing = require('../models/listing.js');
-const {isLoggedIn,validateReview} = require("../middleware.js")
+const {isLoggedIn,validateReview, isAuthor} = require("../middleware.js")
 
 
 //Review
@@ -13,13 +13,14 @@ const {isLoggedIn,validateReview} = require("../middleware.js")
 //and we use bcz we did not define app here
 router.post("/",
     isLoggedIn,
-    validateReview
-    ,wrapAsync(async (req,res)=>{
+    validateReview,
+    wrapAsync(async (req,res)=>{
     const {id} = req.params;
     console.log(id);
     const listing = await Listing.findById(id);
     const newReview = new Review(req.body.review);
-    listing.review.push(newReview);
+    newReview.author = req.user._id;
+     listing.review.push(newReview);
     await newReview.save();
     await listing.save();
     req.flash('success','Review added successfully');
@@ -28,6 +29,7 @@ router.post("/",
 //Delete route for reviews
 router.delete("/:reviewId",
     isLoggedIn,
+    isAuthor,
     wrapAsync(async (req,res)=>{//always use /:id/ one time and second time specify the type of id ex reviewId
     const {id, reviewId} = req.params;
     await Listing.findByIdAndUpdate(id, {$pull: {review: reviewId}});//This line removes the review ID from the listing's review array.

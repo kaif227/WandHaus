@@ -29,7 +29,10 @@ router.post("/signup",async(req,res)=>{
 router.get("/login",(req,res)=>{
     res.render("users/login.ejs")
 });
-router.post("/login",saveRedirectUrl,passport.authenticate("local",{failureRedirect:"/login",failureFlash:true}),async(req,res)=>{
+router.post("/login",
+    saveRedirectUrl,//this middleware is to redirect user to the page they were on before they logged in
+    passport.authenticate("local",{failureRedirect:"/login",failureFlash:true}),
+    async(req,res)=>{
     //whenever we are login we use passport.authenticate to check user and there passport is existe in db or nor local is our strategy and we are using local strategy to authenticate user and if user is not authenticate then it will redirect to login page by usign failureRedirect and flash a message by using  failureFlash
     req.flash("success","Welcome back to Wandhaus!")
     let redirectUrl = res.locals.redirectUrl || "/listings"// if we are not passing any redirectUrl(mean simple login ) then it will redirect to /listings if we are passing redirectUrl(mean ex create new Listingd then it tell us first login then we login) then it will redirect to that url 

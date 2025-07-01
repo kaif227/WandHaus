@@ -35,7 +35,7 @@ router.post("/",
 router.get("/:id",
     wrapAsync( async (req, res) => {
     const {id} = req.params;
-    const listing = await Listing.findById(id).populate('review').populate("owner")//This line finds the listing by its ID and populates the review field with the associated reviews.
+    const listing = await Listing.findById(id).populate({path:"review",populate:{path:"author"}}).populate("owner")//This line finds the listing by its ID and populates the review field with the associated reviews.
     if (!listing){
         req.flash("error","Listing you are requested for does not exist");
         return res.redirect("/listings");
