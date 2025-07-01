@@ -19,6 +19,7 @@ async function main() {
 const initDB = async () => {
     // first we need to delete all the data in the database so this line is compulsory
     await Listing.deleteMany({});
+    initData.data =  initData.data.map((obj)=>({...obj,owner:"686244b5f89291a63c3983b1"}))//mean initData ke data map function ke through har object ko owner denge jiski value 686244b5f89291a63c3983b1 hogi
     // insert the data from the data.js file
     await Listing.insertMany(initData.data);
     // close the connection to the database
