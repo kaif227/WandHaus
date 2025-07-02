@@ -13,7 +13,7 @@ router.post("/signup",async(req,res)=>{
         const {username,email,password} = req.body;
         const newUser = new User({username,email});
         const registeredUser = await User.register(newUser,password);//user.register(newUser,password) ye ek passport ka special methiod h jo db main user ko register karta h istead of using user.save() we use user.register() jisme newUser ,newUser h and dusra parameter password compulsury h
-        req.login(registeredUser,(err)=>{
+        req.login(registeredUser,(err)=>{//jab req.login isliye use kiya kyonki jab bhi koi sinup karta to use wapas login karna padta ab signup ke baad direct login ho jayega
             if(err){
                 return next(err);
             }
