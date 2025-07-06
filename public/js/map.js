@@ -7,7 +7,6 @@ const map = new mapboxgl.Map({
    center: listing.geometry.coordinates, // starting position [lng, lat]. Note that lat must be set between -90 and 90
    zoom: 9 // starting zoom
 });
-//    center: listing.geometry.coordinates, // starting position [lng, lat]. Note that lat must be set between -90 and 90
 
 
 // Create the marker using that element
