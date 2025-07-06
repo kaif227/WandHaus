@@ -3,6 +3,7 @@ body{
      display: flex;
      flex-direction: column;
      min-height: 100vh;
+
 }
 
 .container{
@@ -103,5 +104,10 @@ body{
 .show-card{
     padding-left: 0;
     padding-right: 0;
-
+}
+/* Map */
+#map {
+    height: 400px;
+    width: 80vh;
+    
 }

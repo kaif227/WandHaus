@@ -7,18 +7,17 @@ const { saveRedirectUrl } = require('../middleware.js');
 
 const userController= require('../controllers/user.js');
 
-router.get("/signup",(req,res)=>{
-    res.render("users/signup.ejs")
-});
-router.post("/signup",userController.signup)
 
-router.get("/login",userController.renderSignupForm);
+router.route("/signup")
+.get((req,res)=>{ res.render("users/signup.ejs")})
+.post(userController.signup)
 
-router.post("/login",
-    saveRedirectUrl,//this middleware is to redirect user to the page they were on before they logged in
-    passport.authenticate("local",
-        {failureRedirect:"/login",failureFlash:true}),
-         userController.login);
+router.route("/login")
+.get(userController.renderSignupForm)
+.post(saveRedirectUrl,//this middleware is to redirect user to the page they were on before they logged in
+     passport.authenticate("local",
+    {failureRedirect:"/login",failureFlash:true}),
+    userController.login);
 
 //logged out
 router.get("/logout",userController.logout)

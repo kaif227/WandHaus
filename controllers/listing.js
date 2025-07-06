@@ -1,4 +1,7 @@
-const Listing = require("../models/listing")
+const Listing = require("../models/listing");
+const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
+const mapToken = process.env.MAP_TOKEN;
+const geocodingClient = mbxGeocoding({ accessToken: mapToken });
 
 //Index route
 module.exports.index = async (req, res) => {
@@ -24,10 +27,21 @@ module.exports.showListing =  async (req, res) => {
 
 //Create route
 module.exports.createListing = async (req, res) => {
+   let response = await geocodingClient.forwardGeocode({
+   query: req.body.listing.location,
+   limit: 1
+}).send()
+
+    const url = req.file.path;//cloudinary hame jo image upload ki h uski link/url or filename degi after image upload so after we will take this from req.file.path
+    const filename = req.file.filename;
+
     const newListing =  new Listing(req.body.listing); 
-    console.log(req.user)
     newListing.owner = req.user._id//is line se ye pata chelega who created this listing and we can use it to show the owner of the listing in show.ejs otherwise we have to face the problem of showing the owner of the listing
-    await newListing.save();
+    newListing.image = {url,filename}
+    newListing.geometry = response.body.features[0].geometry;//this line will take the geometry from the response of the geocodingClient.forwardGeocode function and store it in the geometry field of the newListing object that we just made in schema.js
+
+     let savedListing =  await newListing.save();
+     console.log(savedListing)
     req.flash("success", "New listing created successfully!"); 
     res.redirect("/listings"); 
 }
@@ -39,15 +53,23 @@ module.exports.renderEditForm = async (req, res) =>{
      if (!listing){
         req.flash("error","Listing you are requested for does not exist");
         return res.redirect("/listings");
-    }  
-    res.render("listings/edit.ejs", {listing });
+    }
+    let originalImageUrl = listing.image.url;
+    originalImageUrl= originalImageUrl.replace("/upload","/upload/w_250")  
+    res.render("listings/edit.ejs", {listing,originalImageUrl });
 }
 
 //Update route
 module.exports.updateListing = async (req, res) => {
-     let {id} = req.params;
-     //isOwner check karega ki ye listing ka owner kya hai before updating
-    await Listing.findByIdAndUpdate(id,{...req.body.listing})
+    let {id} = req.params;
+    //isOwner check karega ki ye listing ka owner kya hai before updating
+    let listing = await Listing.findByIdAndUpdate(id,{...req.body.listing})
+    if(typeof req.file !=="undefined"){//if there is a file then we will update the image
+        const url = req.file.path;
+        const filename = req.file.filename;
+        listing.image = {url,filename}
+        await listing.save();
+    }
     req.flash("success", "Listing updated successfully!");
     res.redirect(`/listings/${id}`);
 }
