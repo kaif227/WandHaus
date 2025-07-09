@@ -16,6 +16,7 @@ const ExpressError = require('./utils/ExpressError.js');
 
 //flash initialization
 const session = require('express-session');
+const MongoStore = require('connect-mongo');//this will make a store for the session data for production level bcz local session is not good for production level
 const flash = require('connect-flash');
 
 //Passport initialization
@@ -28,7 +29,8 @@ const listingRouter = require('./routes/listing.js'); //importing the listing ro
 const reviewRouter = require('./routes/review.js'); //importing the review routes
 const userRouter = require('./routes/user.js'); //importing the user routes
 
-const MONGO_URL = 'mongodb://127.0.0.1:27017/wandHaus'
+// const MONGO_URL = 'mongodb://127.0.0.1:27017/wandHaus'
+const dbUrl = process.env.ATLASDB_URL
 main()
 .then(() =>{
     console.log("MongoDB is connected")
@@ -36,6 +38,9 @@ main()
 .catch((err) => {
     console.log(err);
 });
+async function main() {
+  await mongoose.connect(dbUrl);
+}
 
 app.use(express.static('public'));
 app.use(express.static(path.join(__dirname, 'public/css')));
@@ -46,8 +51,21 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 
+const store = MongoStore.create({ //this is our session store bcz we cant use local session in production so we use mongoconnect  session for produnction level project
+    mongoUrl: dbUrl,
+    crypto:{
+        secret: "copy cat",//so basicaly no we have done and store sessions in mongo db atlas using this code
+    },
+    touchAfter:24*3600 //1 day we have to login after 1 day
+});
+
+store.on("error",()=>{
+    ("ERROR IN MONGODB SESSION STORE",err);//This line only use for if there is any error occure in session store in mongodb atlas it will tell what actual error occure 
+});
+
 const sessionOptions = {
-  secret: 'keyboard cat',
+  store,
+  secret: "copy cat",
   resave: false,
   saveUninitialized: true,
   cookie:{
@@ -56,6 +74,7 @@ const sessionOptions = {
     httpOnly: true, // prevents client-side JavaScript from accessing the cookie and helps mitigate the risk of cross-site scripting (XSS) attacks
   }
 }
+
 
 //flash middleware
 app.use(session(sessionOptions))// session middleware to handle sessions get from npm install express-session
@@ -78,13 +97,7 @@ app.use((req, res, next) => {
     next();
     });
 
-async function main() {
-  await mongoose.connect(MONGO_URL);
-}
 
-app.get("/",(req,res)=>{
-    res.send("Welcome to the Home Page!");
-});
 
 // app.get("/demouser",async(req,res)=>{
 //   const fakeUser = new User ({
