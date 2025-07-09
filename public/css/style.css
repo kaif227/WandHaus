@@ -113,8 +113,6 @@ body{
 }
 
 /* loader */
-
-
 /* Transparent overlay with low opacity */
 #loader-overlay {
   position: fixed;
