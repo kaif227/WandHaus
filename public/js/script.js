@@ -13,3 +13,11 @@
     }, false);
   });
 })();
+
+//loader
+  window.addEventListener("load", function () {
+    const overlay = document.getElementById("loader-overlay");
+    overlay.style.opacity = "0";
+    overlay.style.pointerEvents = "none";
+    setTimeout(() => overlay.remove(), 500); 
+  });
