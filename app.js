@@ -116,6 +116,11 @@ app.use("/listings/:id/reviews",reviewRouter);
 //signup page
 app.use("/",userRouter)
 
+app.get('/', (req, res) => {
+  res.redirect('/listings');
+});
+
+
 
 
 
